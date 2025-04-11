@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">bowlingApp</string>
+    <string name="name">Név</string>
+    <string name="email">Email</string>
+    <string name="registration">Regisztráció</string>
+    <string name="appName">BumPin</string>
+    <string name="confirm_password">Jelszó újra</string>
+    <string name="password">Jelszó</string>
+    <string name="registrationText">Nincs még fiókod? Regisztrálj</string>
+    <string name="login">Bejelentkezés</string>
+</resources>
