@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/profile"
+        android:title="Profilom" />
+
+    <item
+        android:id="@+id/nav_reservation"
+        android:icon="@drawable/profile"
+        android:title="Új foglalás" />
+
+    <item
+        android:id="@+id/nav_my_reservations"
+        android:icon="@drawable/profile"
+        android:title="Foglalásaim" />
+
+    <item
+        android:id="@+id/nav_about"
+        android:icon="@drawable/profile"
+        android:title="Rólunk" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/profile"
+        android:title="Kijelentkezés" />
+
+</menu>

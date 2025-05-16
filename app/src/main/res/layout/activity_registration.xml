@@ -5,11 +5,15 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="@drawable/gradient_background"
     tools:context=".RegistrationActivity">
 
     <RelativeLayout
+        android:id="@+id/formLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -18,32 +22,45 @@
             android:id="@+id/registrationTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="@string/appName"
-            android:textSize="30sp"
-            android:textAlignment="center"
             android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_alignParentEnd="true"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/registration"
+            android:textColor="@color/white"
+            android:textAlignment="center"
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/nameField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
             android:layout_below="@id/registrationTextView"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:hint="@string/name" />
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:drawableRight="@drawable/profile_light"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
+            android:hint="@string/name"/>
 
         <EditText
             android:id="@+id/emailField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/nameField"
-            android:layout_marginTop="16dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="30dp"
+            android:drawableRight="@drawable/mail_light"
+            android:fontFamily="sans-serif-medium"
             android:hint="@string/email"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:inputType="textEmailAddress" />
 
         <EditText
@@ -51,10 +68,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/emailField"
-            android:layout_marginTop="16dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="30dp"
+            android:drawableRight="@drawable/key_light"
+            android:fontFamily="sans-serif-medium"
             android:hint="@string/password"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:inputType="textPassword" />
 
         <EditText
@@ -62,10 +85,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/passwordField"
-            android:layout_marginTop="16dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="30dp"
+            android:drawableRight="@drawable/check_light"
+            android:fontFamily="sans-serif-medium"
             android:hint="@string/confirm_password"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             android:inputType="textPassword" />
 
         <Button
@@ -73,11 +102,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/confirmPasswordField"
-            android:layout_marginTop="24dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginRight="100dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="sans-serif-medium"
+            android:onClick="register"
             android:text="@string/registration"
-            android:onClick="register"/>
+            android:textColor="@color/white" />
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

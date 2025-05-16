@@ -3,10 +3,13 @@ package com.example.androidbowling;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +28,11 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    private Layout formLayout;
     private EditText emailField, passwordField;
+    private TextView appName, registrationLink;
+    private Button loginButton;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +45,13 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+
         emailField = findViewById(R.id.loginEmailField);
         passwordField = findViewById(R.id.loginPasswordField);
+        appName = findViewById(R.id.registrationTextView);
+        registrationLink = findViewById(R.id.registerLink);
+        progressBar = findViewById(R.id.progressBar);
+        loginButton = findViewById(R.id.loginButton);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -50,12 +62,32 @@ public class LoginActivity extends AppCompatActivity {
         String userEmail = this.emailField.getText().toString();
         String userPassword = this.passwordField.getText().toString();
 
+        if (userEmail.isEmpty() || userPassword.isEmpty()){
+            Toast.makeText(LoginActivity.this, "Üres adatmezők", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         mAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
                     Toast.makeText(LoginActivity.this, "Sikeres bejelentkezés", Toast.LENGTH_LONG).show();
-                    mainPage();
+                    progressBar.setVisibility(View.VISIBLE);
+                    emailField.setVisibility(View.GONE);
+                    passwordField.setVisibility(View.GONE);
+                    appName.setVisibility(View.GONE);
+                    registrationLink.setVisibility(View.GONE);
+                    loginButton.setVisibility(View.GONE);
+                    findViewById(R.id.formLayout).setVisibility(View.GONE);
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressBar.setVisibility(View.GONE);
+                            mainPage();
+                        }
+                    }, 2000); // 2 másodperc "töltés"
+
                 } else {
                     Toast.makeText(LoginActivity.this, "Hibás felhasználónév vagy jelszó", Toast.LENGTH_LONG).show();
                 }

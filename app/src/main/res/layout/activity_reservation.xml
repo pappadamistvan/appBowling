@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".ReservationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bowling Pálya Foglalás"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- Név -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nameInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Név">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/nameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/emailEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Időpont kiválasztása -->
+        <!-- Dátum és időpont kiválasztása -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Válasszon dátumot és időpontot:"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/datePickerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dátum kiválasztása"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Spinner az idő kiválasztásához -->
+        <Spinner
+            android:id="@+id/timeSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+
+        <TextView
+            android:id="@+id/selectedDateTimeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nincs kiválasztva időpont"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Pálya kiválasztása -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Válassza ki a pályát:"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/laneRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp">
+
+            <RadioButton
+                android:id="@+id/lane1RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1-es pálya"/>
+
+            <RadioButton
+                android:id="@+id/lane2RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2-es pálya"/>
+
+            <RadioButton
+                android:id="@+id/lane3RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="3-as pálya"/>
+
+            <RadioButton
+                android:id="@+id/lane4RadioButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="4-es pálya"/>
+        </RadioGroup>
+
+        <!-- Foglalás gomb -->
+        <Button
+            android:id="@+id/reserveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Foglalás"
+            android:padding="12dp"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+</ScrollView>

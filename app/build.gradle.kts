@@ -39,8 +39,10 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.firebase.auth)
+    implementation(libs.navigation.fragment)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation(libs.firebase.firestore)
 }
