@@ -2,6 +2,7 @@ package com.example.androidbowling.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidbowling.EditReservationActivity;
 import com.example.androidbowling.R;
 import com.example.androidbowling.model.Reservation;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -70,8 +72,12 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
 
         holder.btnEdit.setOnClickListener(v -> {
             if (canModifyOrDelete(res.getDate())) {
-                Toast.makeText(context, "Itt jönne a módosítás logika (pl. dátum választás)", Toast.LENGTH_SHORT).show();
-                // TODO: Megnyitni egy EditReservationActivity-t, vagy egy dátumválasztó párbeszédablakot
+                Intent intent = new Intent(context, EditReservationActivity.class);
+                intent.putExtra("reservationId", "fake"); // opcionális, ha lenne külön ID-d
+                intent.putExtra("date", res.getDate());
+                intent.putExtra("lane", res.getLane());
+                intent.putExtra("userId", res.getId());
+                context.startActivity(intent);
             } else {
                 Toast.makeText(context, "A foglalást csak 24 órával előtte lehet módosítani.", Toast.LENGTH_SHORT).show();
             }
@@ -96,7 +102,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     private boolean canModifyOrDelete(String dateString) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         try {
             Date reservationDate = sdf.parse(dateString);
             Date now = new Date();
@@ -107,6 +113,7 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
             return false;
         }
     }
+
 
     private void confirmDelete(Reservation reservation) {
         new AlertDialog.Builder(context)

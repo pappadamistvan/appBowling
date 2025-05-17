@@ -1,30 +1,24 @@
 package com.example.androidbowling;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
+import android.widget.AutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
@@ -40,8 +34,8 @@ public class ReservationActivity extends AppCompatActivity {
 
     private TextInputLayout nameInputLayout, emailInputLayout;
     private TextInputEditText nameEditText, emailEditText;
-    private Button datePickerButton, reserveButton;
-    private Spinner timeSpinner;
+    private MaterialButton datePickerButton, reserveButton;
+    private AutoCompleteTextView timeSpinner;
     private TextView selectedDateTimeTextView;
     private RadioGroup laneRadioGroup;
 
@@ -49,7 +43,6 @@ public class ReservationActivity extends AppCompatActivity {
     private boolean isDateSelected = false;
     private boolean isTimeSelected = false;
 
-    // Firestore adatbázis
     private FirebaseFirestore db;
 
     @Override
@@ -57,9 +50,10 @@ public class ReservationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
 
-        // Firestore inicializálása
-        db = FirebaseFirestore.getInstance();
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        db = FirebaseFirestore.getInstance();
 
         initializeViews();
         setupTimeSpinner();
@@ -72,10 +66,10 @@ public class ReservationActivity extends AppCompatActivity {
         nameEditText = findViewById(R.id.nameEditText);
         emailEditText = findViewById(R.id.emailEditText);
         datePickerButton = findViewById(R.id.datePickerButton);
+        reserveButton = findViewById(R.id.reserveButton);
         timeSpinner = findViewById(R.id.timeSpinner);
         selectedDateTimeTextView = findViewById(R.id.selectedDateTimeTextView);
         laneRadioGroup = findViewById(R.id.laneRadioGroup);
-        reserveButton = findViewById(R.id.reserveButton);
     }
 
     private void setupTimeSpinner() {
@@ -85,169 +79,119 @@ public class ReservationActivity extends AppCompatActivity {
         }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, hours);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                android.R.layout.simple_dropdown_item_1line, hours);
         timeSpinner.setAdapter(adapter);
+
+        timeSpinner.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedTime = (String) parent.getItemAtPosition(position);
+            if (selectedTime != null && selectedTime.contains(":")) {
+                int hour = Integer.parseInt(selectedTime.split(":")[0]);
+                selectedCalendar.set(Calendar.HOUR_OF_DAY, hour);
+                selectedCalendar.set(Calendar.MINUTE, 0);
+                isTimeSelected = true;
+                updateSelectedDateTimeText();
+            }
+        });
     }
 
     private void setupEventListeners() {
-        datePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDatePickerDialog();
-            }
+        datePickerButton.setOnClickListener(v -> {
+            int year = selectedCalendar.get(Calendar.YEAR);
+            int month = selectedCalendar.get(Calendar.MONTH);
+            int day = selectedCalendar.get(Calendar.DAY_OF_MONTH);
+
+            new DatePickerDialog(this, (view, y, m, d) -> {
+                selectedCalendar.set(Calendar.YEAR, y);
+                selectedCalendar.set(Calendar.MONTH, m);
+                selectedCalendar.set(Calendar.DAY_OF_MONTH, d);
+                isDateSelected = true;
+                updateSelectedDateTimeText();
+            }, year, month, day).show();
         });
 
-        reserveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validateAndSubmitReservation();
-            }
-        });
-    }
-
-    private void showDatePickerDialog() {
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                ReservationActivity.this,
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        selectedCalendar.set(Calendar.YEAR, year);
-                        selectedCalendar.set(Calendar.MONTH, monthOfYear);
-                        selectedCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        isDateSelected = true;
-                        updateSelectedDateTimeText();
-                    }
-                },
-                year, month, day);
-
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
-        datePickerDialog.show();
+        reserveButton.setOnClickListener(v -> handleReservation());
     }
 
     private void updateSelectedDateTimeText() {
         if (isDateSelected && isTimeSelected) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy. MM. dd. HH:mm", Locale.getDefault());
-            String formattedDateTime = dateFormat.format(selectedCalendar.getTime());
-            selectedDateTimeTextView.setText(formattedDateTime);
-        } else if (isDateSelected) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy. MM. dd.", Locale.getDefault());
-            selectedDateTimeTextView.setText(dateFormat.format(selectedCalendar.getTime()) + " (idő kiválasztása szükséges)");
-        } else {
-            selectedDateTimeTextView.setText("Nincs kiválasztva időpont");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            String formatted = sdf.format(selectedCalendar.getTime());
+            selectedDateTimeTextView.setText("Kiválasztott időpont: " + formatted);
         }
     }
 
-    private void validateAndSubmitReservation() {
-        boolean isValid = true;
-        String name = nameEditText.getText().toString().trim();
-        String email = emailEditText.getText().toString().trim();
+    private void handleReservation() {
+        String name = nameEditText.getText() != null ? nameEditText.getText().toString().trim() : "";
+        String email = emailEditText.getText() != null ? emailEditText.getText().toString().trim() : "";
 
+        int selectedLaneId = laneRadioGroup.getCheckedRadioButtonId();
         if (TextUtils.isEmpty(name)) {
-            nameInputLayout.setError("A név megadása kötelező");
-            isValid = false;
+            nameInputLayout.setError("Név megadása kötelező");
+            return;
         } else {
             nameInputLayout.setError(null);
         }
 
         if (TextUtils.isEmpty(email)) {
-            emailInputLayout.setError("Az email megadása kötelező");
-            isValid = false;
-        } else if (!isValidEmail(email)) {
-            emailInputLayout.setError("Érvénytelen email cím");
-            isValid = false;
+            emailInputLayout.setError("Email megadása kötelező");
+            return;
         } else {
             emailInputLayout.setError(null);
         }
 
-        if (!isDateSelected) {
-            Toast.makeText(this, "Kérjük, válasszon dátumot", Toast.LENGTH_SHORT).show();
-            isValid = false;
+        if (!isDateSelected || !isTimeSelected) {
+            Toast.makeText(this, "Kérlek válassz dátumot és időpontot!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        // Spinnerből kiválasztott időpont beállítása
-        String selectedTime = (String) timeSpinner.getSelectedItem();
-        if (selectedTime != null && selectedTime.contains(":")) {
-            int hour = Integer.parseInt(selectedTime.split(":")[0]);
-            selectedCalendar.set(Calendar.HOUR_OF_DAY, hour);
-            selectedCalendar.set(Calendar.MINUTE, 0);
-            isTimeSelected = true;
-        } else {
-            isTimeSelected = false;
-            Toast.makeText(this, "Kérjük, válasszon időpontot", Toast.LENGTH_SHORT).show();
-            isValid = false;
+        if (selectedLaneId == -1) {
+            Toast.makeText(this, "Kérlek válassz egy pályát!", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (laneRadioGroup.getCheckedRadioButtonId() == -1) {
-            Toast.makeText(this, "Kérjük, válasszon pályát", Toast.LENGTH_SHORT).show();
-            isValid = false;
-        }
+        RadioButton selectedRadioButton = findViewById(selectedLaneId);
+        String lane = selectedRadioButton.getText().toString();
+        String[] cuttedLane = lane.split("-");
 
-        if (isValid) {
-            updateSelectedDateTimeText();
-            saveReservationToFirestore(name, email);
-        }
-    }
+        // Dátum/idő string formátumban
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        String dateTime = sdf.format(selectedCalendar.getTime());
 
-    private void saveReservationToFirestore(String name, String email) {
-        // Timestamp létrehozása a kiválasztott dátum és időpont alapján
-        SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        String formattedDate = fullDateFormat.format(selectedCalendar.getTime());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = user != null ? user.getUid() : "guest";
 
-        // Kiválasztott pálya számának megszerzése
-        int selectedLaneId = laneRadioGroup.getCheckedRadioButtonId();
-        RadioButton selectedLaneButton = findViewById(selectedLaneId);
-        String laneText = selectedLaneButton.getText().toString();
-        String trackNumber = laneText.split("-")[0].trim(); // Például "1-es pálya" esetén kivesszük az "1"-et
-
-        // Egyedi azonosító generálása a foglaláshoz
         String reservationId = UUID.randomUUID().toString();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Foglalási adatok létrehozása
         Map<String, Object> reservation = new HashMap<>();
-        reservation.put("date", formattedDate);
-        reservation.put("id", currentUser.getUid());
-        reservation.put("track", trackNumber);
+        reservation.put("name", name);
+        reservation.put("email", email);
+        reservation.put("date", dateTime);
+        reservation.put("track", cuttedLane[0]);
+        reservation.put("id", userId);
 
-        // Adatok mentése a Firestore-ba
         db.collection("Reservation")
-                .document(reservationId)
-                .set(reservation)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Foglalás sikeres: " + reservationId);
-                        Toast.makeText(ReservationActivity.this, "Foglalás sikeres!", Toast.LENGTH_LONG).show();
-                        clearFormFields();
+                .whereEqualTo("date", dateTime)
+                .whereEqualTo("track", cuttedLane[0])
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        Toast.makeText(this, "Erre az időpontra és pályára már van foglalás!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        db.collection("Reservation").document(reservationId)
+                                .set(reservation)
+                                .addOnSuccessListener(unused -> {
+                                    Toast.makeText(this, "Foglalás sikeres!", Toast.LENGTH_LONG).show();
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e(TAG, "Foglalás sikertelen", e);
+                                    Toast.makeText(this, "Hiba történt a foglalás során", Toast.LENGTH_SHORT).show();
+                                });
                     }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Hiba történt a foglalás mentése közben", e);
-                        Toast.makeText(ReservationActivity.this, "Hiba történt a foglalás során: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Hiba történt az ellenőrzés során", Toast.LENGTH_SHORT).show();
                 });
-    }
 
-    // Foglalás után a mezők törlése
-    private void clearFormFields() {
-        nameEditText.setText("");
-        emailEditText.setText("");
-        laneRadioGroup.clearCheck();
-        isDateSelected = false;
-        isTimeSelected = false;
-        selectedDateTimeTextView.setText("Nincs kiválasztva időpont");
-        timeSpinner.setSelection(0);
-    }
-
-    private boolean isValidEmail(String email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

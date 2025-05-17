@@ -1,17 +1,21 @@
 package com.example.androidbowling;
 
-import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
-
-import com.example.androidbowling.adapter.ReservationAdapter;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.androidbowling.adapter.ReservationAdapter;
 import com.example.androidbowling.model.Reservation;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
@@ -21,60 +25,97 @@ import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView profileName, profileEmail;
+    private TextView profileName, profileEmail, emptyReservationsText;
     private RecyclerView reservationsRecyclerView;
     private ReservationAdapter adapter;
     private List<Reservation> reservationList;
 
     private FirebaseFirestore db;
+    private FirebaseAuth auth;
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // --- View inicializálás ---
         profileName = findViewById(R.id.profileName);
         profileEmail = findViewById(R.id.profileEmail);
+        emptyReservationsText = findViewById(R.id.emptyReservationsText);
         reservationsRecyclerView = findViewById(R.id.reservationsRecyclerView);
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        MaterialButton btnNewReservation = findViewById(R.id.btnNewReservation);
+        MaterialButton btnLogout = findViewById(R.id.btnLogout);
+        MaterialToolbar toolbar = findViewById(R.id.toolbar);
 
-        if (currentUser != null) {
-            profileEmail.setText("Email: " + currentUser.getEmail());
-            profileName.setText("Felhasználó UID: " + currentUser.getUid());
+        // --- Toolbar visszalépés támogatás, ha szükséges ---
+        setSupportActionBar(toolbar);
 
-            // Firestore inicializálása és lekérdezés
-            db = FirebaseFirestore.getInstance();
-            reservationList = new ArrayList<>();
-            adapter = new ReservationAdapter(reservationList);
-            reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            reservationsRecyclerView.setAdapter(adapter);
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
 
-            db.collection("Reservation")
-                    .whereEqualTo("id", currentUser.getUid())
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                            String date = document.getString("date");
-                            String id = document.getString("id");
-                            String track = document.getString("track");
+        if (currentUser == null) {
+            Toast.makeText(this, "Nem vagy bejelentkezve!", Toast.LENGTH_SHORT).show();
+            finish(); // kilép, ha nincs felhasználó
+            return;
+        }
 
+        profileEmail.setText("Email: " + currentUser.getEmail());
+
+        // --- Név lekérése Firestore-ból ---
+        db.collection("User")
+                .document(currentUser.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String name = documentSnapshot.getString("name");
+                        profileName.setText("Név: " + name);
+                    } else {
+                        profileName.setText("Név: (nem található)");
+                    }
+                })
+                .addOnFailureListener(e -> profileName.setText("Név: (hiba)"));
+
+        // --- Foglalások listázása ---
+        reservationList = new ArrayList<>();
+        adapter = new ReservationAdapter(reservationList);
+        reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        reservationsRecyclerView.setAdapter(adapter);
+
+        db.collection("Reservation")
+                .whereEqualTo("id", currentUser.getUid())
+                .get()
+                .addOnSuccessListener(querySnapshots -> {
+                    if (querySnapshots.isEmpty()) {
+                        emptyReservationsText.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyReservationsText.setVisibility(View.GONE);
+                        for (QueryDocumentSnapshot document : querySnapshots) {
                             Reservation reservation = new Reservation();
-                            reservation.setDate(date);
-                            reservation.setId(id);
-                            reservation.setLane(track);
-
+                            reservation.setDate(document.getString("date"));
+                            reservation.setId(document.getString("id"));
+                            reservation.setLane(document.getString("track"));
                             reservationList.add(reservation);
                         }
                         adapter.notifyDataSetChanged();
-                    })
-                    .addOnFailureListener(e -> {
-                        // hiba kezelése (pl. log, Toast)
-                    });
-        } else {
-            profileEmail.setText("Nincs bejelentkezve");
-            profileName.setText("");
-        }
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Hiba a foglalások betöltésekor.", Toast.LENGTH_SHORT).show();
+                });
+
+        // --- Gombműveletek ---
+        btnNewReservation.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, ReservationActivity.class);
+            startActivity(intent);
+        });
+
+        btnLogout.setOnClickListener(v -> {
+            auth.signOut();
+            Toast.makeText(this, "Kijelentkezve", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            finish();
+        });
     }
 }

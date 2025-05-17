@@ -27,5 +27,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ProfileActivity.class);
             startActivity(intent);
         });
+
+        Intent intent = new Intent(MainActivity.this, ReservationActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.transition.slide_in_right, R.transition.slide_out_left);
     }
 }

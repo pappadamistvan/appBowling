@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:ordering="sequentially">
+
+    <!-- Első mozgás - jobbra -->
+    <set android:ordering="together">
+        <objectAnimator
+            android:propertyName="translationX"
+            android:duration="800"
+            android:valueFrom="0"
+            android:valueTo="80"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+        <objectAnimator
+            android:propertyName="rotation"
+            android:duration="800"
+            android:valueFrom="0"
+            android:valueTo="180"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/linear_interpolator"/>
+    </set>
+
+    <!-- Második mozgás - balra -->
+    <set android:ordering="together">
+        <objectAnimator
+            android:propertyName="translationX"
+            android:duration="800"
+            android:valueFrom="80"
+            android:valueTo="-80"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+        <objectAnimator
+            android:propertyName="rotation"
+            android:duration="800"
+            android:valueFrom="180"
+            android:valueTo="540"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/linear_interpolator"/>
+    </set>
+
+    <!-- Harmadik mozgás - vissza középre -->
+    <set android:ordering="together">
+        <objectAnimator
+            android:propertyName="translationX"
+            android:duration="800"
+            android:valueFrom="-80"
+            android:valueTo="0"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
+
+        <objectAnimator
+            android:propertyName="rotation"
+            android:duration="800"
+            android:valueFrom="540"
+            android:valueTo="720"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/linear_interpolator"/>
+    </set>
+
+    <!-- Gurítás animáció -->
+    <set android:ordering="together">
+        <objectAnimator
+            android:propertyName="translationY"
+            android:duration="1000"
+            android:valueFrom="0"
+            android:valueTo="150"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/accelerate_interpolator"/>
+
+        <objectAnimator
+            android:propertyName="rotation"
+            android:duration="1000"
+            android:valueFrom="0"
+            android:valueTo="360"
+            android:valueType="floatType"
+            android:interpolator="@android:anim/linear_interpolator"/>
+    </set>
+</set>
