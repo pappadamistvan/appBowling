@@ -62,7 +62,7 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="16dp"/>
 
-                    <!-- Név -->
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/nameInputLayout"
                         android:layout_width="match_parent"
@@ -117,7 +117,7 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="16dp"/>
 
-                    <!-- Dátum és időpont kiválasztása -->
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/datePickerButton"
                         android:layout_width="match_parent"
@@ -127,7 +127,7 @@
                         app:iconGravity="textStart"
                         android:layout_marginBottom="16dp" />
 
-                    <!-- Spinner az idő kiválasztásához -->
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                         android:gravity="center"
                         android:layout_marginBottom="16dp"/>
 
-                    <!-- Pálya kiválasztása -->
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Foglalás gomb -->
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/reserveButton"
                 android:layout_width="match_parent"

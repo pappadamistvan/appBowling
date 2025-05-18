@@ -28,7 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private Layout formLayout;
     private EditText emailField, passwordField;
     private TextView appName, registrationLink;
     private Button loginButton;
@@ -86,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                             progressBar.setVisibility(View.GONE);
                             mainPage();
                         }
-                    }, 2000); // 2 másodperc "töltés"
+                    }, 2000);
 
                 } else {
                     Toast.makeText(LoginActivity.this, "Hibás felhasználónév vagy jelszó", Toast.LENGTH_LONG).show();

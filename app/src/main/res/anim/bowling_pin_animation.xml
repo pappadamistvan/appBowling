@@ -2,7 +2,6 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:ordering="sequentially">
 
-    <!-- Várakozás, amíg a bowling golyó odaér -->
     <objectAnimator
         android:propertyName="alpha"
         android:duration="3400"
@@ -10,7 +9,7 @@
         android:valueTo="1"
         android:valueType="floatType"/>
 
-    <!-- Kidőlés animáció -->
+
     <set android:ordering="together">
         <objectAnimator
             android:propertyName="rotation"
@@ -29,7 +28,7 @@
             android:interpolator="@android:anim/accelerate_interpolator"/>
     </set>
 
-    <!-- Visszaállási animáció -->
+
     <set android:ordering="together"
         android:startOffset="1000">
         <objectAnimator

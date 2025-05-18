@@ -5,7 +5,7 @@ public class Reservation {
     private String id;
     private String lane;
 
-    public Reservation() {} // Firestore-nak kötelező
+    public Reservation() {}
 
     public Reservation(String date, String id, String lane) {
         this.date = date;

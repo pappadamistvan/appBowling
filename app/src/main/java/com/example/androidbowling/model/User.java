@@ -10,7 +10,7 @@ public class User {
     private String name;
     private String email;
 
-    // Üres konstruktor Firebase-hez
+
     public User() {
     }
 

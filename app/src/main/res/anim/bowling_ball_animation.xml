@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:ordering="sequentially">
 
-    <!-- Első mozgás - jobbra -->
+
     <set android:ordering="together">
         <objectAnimator
             android:propertyName="translationX"
@@ -21,7 +21,7 @@
             android:interpolator="@android:anim/linear_interpolator"/>
     </set>
 
-    <!-- Második mozgás - balra -->
+
     <set android:ordering="together">
         <objectAnimator
             android:propertyName="translationX"
@@ -40,7 +40,7 @@
             android:interpolator="@android:anim/linear_interpolator"/>
     </set>
 
-    <!-- Harmadik mozgás - vissza középre -->
+
     <set android:ordering="together">
         <objectAnimator
             android:propertyName="translationX"
@@ -59,7 +59,7 @@
             android:interpolator="@android:anim/linear_interpolator"/>
     </set>
 
-    <!-- Gurítás animáció -->
+
     <set android:ordering="together">
         <objectAnimator
             android:propertyName="translationY"

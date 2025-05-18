@@ -1,6 +1,7 @@
 package com.example.androidbowling;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -153,7 +154,6 @@ public class ReservationActivity extends AppCompatActivity {
         String lane = selectedRadioButton.getText().toString();
         String[] cuttedLane = lane.split("-");
 
-        // Dátum/idő string formátumban
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         String dateTime = sdf.format(selectedCalendar.getTime());
 
@@ -181,6 +181,9 @@ public class ReservationActivity extends AppCompatActivity {
                                 .set(reservation)
                                 .addOnSuccessListener(unused -> {
                                     Toast.makeText(this, "Foglalás sikeres!", Toast.LENGTH_LONG).show();
+                                    Intent intent = new Intent(ReservationActivity.this, MainActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
                                     finish();
                                 })
                                 .addOnFailureListener(e -> {

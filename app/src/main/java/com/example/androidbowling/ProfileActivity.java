@@ -38,7 +38,6 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // --- View inicializálás ---
         profileName = findViewById(R.id.profileName);
         profileEmail = findViewById(R.id.profileEmail);
         emptyReservationsText = findViewById(R.id.emptyReservationsText);
@@ -48,7 +47,6 @@ public class ProfileActivity extends AppCompatActivity {
         MaterialButton btnLogout = findViewById(R.id.btnLogout);
         MaterialToolbar toolbar = findViewById(R.id.toolbar);
 
-        // --- Toolbar visszalépés támogatás, ha szükséges ---
         setSupportActionBar(toolbar);
 
         auth = FirebaseAuth.getInstance();
@@ -57,13 +55,12 @@ public class ProfileActivity extends AppCompatActivity {
 
         if (currentUser == null) {
             Toast.makeText(this, "Nem vagy bejelentkezve!", Toast.LENGTH_SHORT).show();
-            finish(); // kilép, ha nincs felhasználó
+            finish();
             return;
         }
 
         profileEmail.setText("Email: " + currentUser.getEmail());
 
-        // --- Név lekérése Firestore-ból ---
         db.collection("User")
                 .document(currentUser.getUid())
                 .get()
@@ -77,7 +74,6 @@ public class ProfileActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> profileName.setText("Név: (hiba)"));
 
-        // --- Foglalások listázása ---
         reservationList = new ArrayList<>();
         adapter = new ReservationAdapter(reservationList);
         reservationsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -105,7 +101,6 @@ public class ProfileActivity extends AppCompatActivity {
                     Toast.makeText(this, "Hiba a foglalások betöltésekor.", Toast.LENGTH_SHORT).show();
                 });
 
-        // --- Gombműveletek ---
         btnNewReservation.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, ReservationActivity.class);
             startActivity(intent);
